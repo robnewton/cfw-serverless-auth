@@ -1,0 +1,9 @@
+name = "cfw-auth"
+type = "javascript"
+account_id = "afe990c957f2e5b29dc304d76b5bb052"
+workers_dev = true
+zone_id = "02321467a5583ac38a8b41975aa7d3de"
+vars = { ENVIRONMENT = "dev" }
+kv_namespaces = [
+    { binding = "KV_SECRETS", id = "5fee9b6d0e99479091bd638dcda0bc0b" }
+]

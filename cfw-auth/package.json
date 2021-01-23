@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "worker-auth",
+  "version": "1.0.0",
+  "description": "A Cloudflare worker project for performing user authentication",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write '**/*.{js,css,json,md}'"
+  },
+  "author": "Rob Newton <robbienewton@gmail.com>",
+  "license": "MIT"
+}
