@@ -2,6 +2,12 @@ const jwt = require("jsonwebtoken")
 const cookie = require("cookie")
 const bcrypt = require("bcryptjs")
 
+const log = true
+
+addEventListener('fetch', event => {
+  return event.respondWith(handleRequest(event.request))
+})
+
 /**
  * Respond with hello worker text
  * @param {Request} request
@@ -11,12 +17,14 @@ async function handleRequest(request) {
   try {
     // Expect the user logs in by passing the email and password
     // in as the JSON body of the request
-    const { email, password } = JSON.parse(request.body)
-    console.log(`Login request - email: ${email}  pass: ${password}`)
+    const body = JSON.parse(await readRequestBody(request))
+    const { email, password } = body
+    log && console.log(`Login request - email: ${email}  pass: ${password}`)
 
     // Try to fetch the user object, if it is not found then 
     // return error (401 Unauthorized)
     const user = await fetchUser(email)
+    log && console.log('Fetched user: ', user)
     if (user == null) {
       errorStatusCode = 401
       throw new Error(`Invalid password or email`)
@@ -25,16 +33,17 @@ async function handleRequest(request) {
     // Compare the password, if it doesn't match the found 
     // user object then return error (401 Unauthorized)
     const matches = await bcrypt.compare(password, user.password)
+    log && console.log('Password matches!')
     if (!matches) {
       errorStatusCode = 401
       throw new Error(`Invalid password or email`)
     }
     
     // Enhance the user object with hasura specific claims
-    const hasuraUser = addHasuraClaims(user)
+    const hasuraUser = await addHasuraClaims(user)
 
     // Create a JWT and serialize as a secure http-only cookie
-    const jwtCookie = createJwtCookie(hasuraUser)
+    const jwtCookie = await createJwtCookie(hasuraUser)
 
     // Finally respond to the caller with the JWT cookie and 
     // basic user object in the body as JSON
@@ -47,8 +56,9 @@ async function handleRequest(request) {
       }
     })
   } catch (error) {
+    log && console.log('Error: ', error.message)
     // Convert any thrown exceptions to an error response
-    return new Response(JSON.stringify(error), {
+    return new Response(JSON.stringify({error: error.message}), {
       status: errorStatusCode,
       headers: {
         "Content-Type": "application/json",
@@ -58,15 +68,57 @@ async function handleRequest(request) {
 }
 
 
+/**
+ * readRequestBody reads in the incoming request body
+ * Use await readRequestBody(..) in an async function to get the string
+ * @param {Request} request the incoming request to read from
+ */
+async function readRequestBody(request) {
+  const { headers } = request
+  const contentType = headers.get("content-type") || ""
+
+  if (contentType.includes("application/json")) {
+    return JSON.stringify(await request.json())
+  }
+  else if (contentType.includes("application/text")) {
+    return await request.text()
+  }
+  else if (contentType.includes("text/html")) {
+    return await request.text()
+  }
+  else if (contentType.includes("form")) {
+    const formData = await request.formData()
+    const body = {}
+    for (const entry of formData.entries()) {
+      body[entry[0]] = entry[1]
+    }
+    return JSON.stringify(body)
+  }
+  else {
+    const myBlob = await request.blob()
+    const objectURL = URL.createObjectURL(myBlob)
+    return objectURL
+  }
+}
+
+
 /*
  * Lookup a user object using the email passed in
  * on the body of the reqest
  */
 async function fetchUser(email) {
+  console.log(`fetchUser: ${email}`)
+
   let user = null
 
-  const url = ``  //TODO put a gql endpoint here
-  const query = ``  //TODO put a GQL query here
+  const url = `https://httpbin.org/anything`  //TODO put a gql endpoint here
+  const query = `query {
+    users {
+      id
+      email
+      password
+    }
+  }`  //TODO put a GQL query here
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -138,7 +190,3 @@ async function createJwtCookie(payload) {
 
   return jwtCookie
 }
-
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
