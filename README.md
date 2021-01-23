@@ -1,8 +1,8 @@
 .. meta::
-   :description: JAMStack Serverless Authentication Running on Cloudflare Workers and Cache
-   :keywords: edge, workers, cloudflare, authentication, JWT, hasura, serverless, cdn, react, spa
+   :description: Serverless Authentication Running on Cloudflare Workers and Cache
+   :keywords: edge, workers, cloudflare, authentication, JWT, hasura, serverless, cdn, react, spa, jamstack
 
-JAMStack Serverless Authentication Running on Cloudflare Workers and Cache
+Serverless Authentication Running on Cloudflare Workers and Cache
 ===
 
 .. contents:: Table of contents
