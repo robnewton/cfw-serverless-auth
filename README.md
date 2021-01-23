@@ -41,13 +41,16 @@ Upon refresh, extra security would be to delete a refresh token from the cache i
 Costs
 ---
 Since we can have up to 100k worker requests per day on the free plan, we can likely not have to pay for authentication.
-https://developers.cloudflare.com/workers/platform/limits
+
+- https://developers.cloudflare.com/workers/platform/limits
+
 Resources
-https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/#basics_client_setup_expiration
-https://developers.cloudflare.com/workers/learning/how-the-cache-works
-https://developers.cloudflare.com/workers/examples/cache-api
-https://developers.cloudflare.com/workers/runtime-apis/kv
-https://github.com/cloudflare/wrangler-action
+---
+- https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/#basics_client_setup_expiration
+- https://developers.cloudflare.com/workers/learning/how-the-cache-works
+- https://developers.cloudflare.com/workers/examples/cache-api
+- https://developers.cloudflare.com/workers/runtime-apis/kv
+- https://github.com/cloudflare/wrangler-action
 
 Extra Credit
 ---
