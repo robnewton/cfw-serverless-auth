@@ -1,5 +1,18 @@
-JAMStack Serverless Authentication Using Cloudflare Workers and Cache
+.. meta::
+   :description: JAMStack Serverless Authentication Running on Cloudflare Workers and Cache
+   :keywords: edge, workers, cloudflare, authentication, JWT, hasura, serverless, cdn, react, spa
+
+JAMStack Serverless Authentication Running on Cloudflare Workers and Cache
 ===
+
+.. contents:: Table of contents
+  :backlinks: none
+  :depth: 1
+  :local:
+
+Introduction
+---
+The basic idea is to do authentication (login) in a Cloudflare Worker in the CDN edge using JS referencing a user database table in the database through GraphQL using the Hasura admin secret.
 
 **Caveat**
 This is just an idea. I don't know if it will work but I want to take a few minutes to try it out. I already use Auth0 and know that this is reinventing a wheel, but I am always looking for simplicity in the stack.
@@ -8,10 +21,6 @@ This is just an idea. I don't know if it will work but I want to take a few minu
 Apple recently changed their policy on third party cookies and it caused our implementation of Auth0 Lock in the React apps to stop working on Apple devices. After login they would never redirect back to the site with the JWT token.
 
 I searched a while and all of the solutions to get around these lack of support for 3rd party cookies didn't work. I've tried upgrading Lock, changing Auth0 settings, and nothing seemed to work. I know the underlying process is simple so I just got frustrated and wanted to get rid of all of the complexity and confusion that comes from misleading and outdated documentation and advice online around the Auth0 platform and just develop a simple authentication system myself.
-
-Introduction
----
-The basic idea is to do authentication (login) in a Cloudflare Worker in the CDN edge using JS referencing a user database table in the database through GraphQL using the Hasura admin secret.
 
 The Workers
 ---
