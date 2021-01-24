@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken")
 const cookie = require("cookie")
 const bcrypt = require("bcryptjs")
+const { getToken } = require('@sagi.io/workers-jwt')
 
 const log = true
 
@@ -43,7 +44,7 @@ async function handleRequest(request) {
     const hasuraUser = await addHasuraClaims(user)
 
     // Create a JWT and serialize as a secure http-only cookie
-    const jwtCookie = await createJwtCookie(hasuraUser)
+    const jwtCookie = await createJwtCookieWithWebCrypto(hasuraUser)
 
     // Finally respond to the caller with the JWT cookie and 
     // basic user object in the body as JSON
@@ -135,6 +136,28 @@ async function createJwtCookie(payload) {
   const token = jwt.sign(payload, secretKey, {
     algorithm: "RS256",
     expiresIn: "15m",
+  })
+
+  const jwtCookie = cookie.serialize("jwt", token, {
+    secure: true,
+    httpOnly: true,
+    path: "/",
+  })
+
+  return jwtCookie
+}
+
+
+/*
+ * Generate a JWT with the user ID and email as the payload,
+ * then serialize to a secure HTTP-only cookie.
+ */
+async function createJwtCookieWithWebCrypto(payload) {
+  const privateKeyPEM = await KV_SECRETS.get("jwtRS256.key")
+
+  const token = await getToken({
+    privateKeyPEM,
+    payload
   })
 
   const jwtCookie = cookie.serialize("jwt", token, {

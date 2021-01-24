@@ -11,6 +11,7 @@
   "author": "Rob Newton <robbienewton@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@sagi.io/workers-jwt": "0.0.20",
     "bcryptjs": "^2.4.3",
     "cookie": "^0.4.1",
     "jsonwebtoken": "^8.5.1"

@@ -10,6 +10,13 @@ Serverless Authentication Running on Cloudflare Workers and Cache
   :depth: 1
   :local:
 
+UPDATE - Doesn't Work
+---
+While technically this compiles and runs successfully, the password hashing proves too CPU intensive a task to perform in the allotted CPU time available (10ms free and 50ms bundled). As is usually the case when I have an idea if something will work it takes trying it and failing to find teh silver bullet online posting that could have told me the answer in the first place. In this case, that URL is below.
+
+- https://community.cloudflare.com/t/options-for-password-hashing/138077/11
+
+
 Introduction
 ---
 The basic idea is to do authentication (login) in a Cloudflare Worker in the CDN edge using JS referencing a user database table in the database through GraphQL using the Hasura admin secret.
