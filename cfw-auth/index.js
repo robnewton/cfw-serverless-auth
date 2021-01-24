@@ -17,7 +17,7 @@ async function handleRequest(request) {
   try {
     // Expect the user logs in by passing the email and password
     // in as the JSON body of the request
-    const body = JSON.parse(await readRequestBody(request))
+    const body = await request.json()
     const { email, password } = body
     log && console.log(`Login request - email: ${email}  pass: ${password}`)
 
@@ -68,40 +68,6 @@ async function handleRequest(request) {
 }
 
 
-/**
- * readRequestBody reads in the incoming request body
- * Use await readRequestBody(..) in an async function to get the string
- * @param {Request} request the incoming request to read from
- */
-async function readRequestBody(request) {
-  const { headers } = request
-  const contentType = headers.get("content-type") || ""
-
-  if (contentType.includes("application/json")) {
-    return JSON.stringify(await request.json())
-  }
-  else if (contentType.includes("application/text")) {
-    return await request.text()
-  }
-  else if (contentType.includes("text/html")) {
-    return await request.text()
-  }
-  else if (contentType.includes("form")) {
-    const formData = await request.formData()
-    const body = {}
-    for (const entry of formData.entries()) {
-      body[entry[0]] = entry[1]
-    }
-    return JSON.stringify(body)
-  }
-  else {
-    const myBlob = await request.blob()
-    const objectURL = URL.createObjectURL(myBlob)
-    return objectURL
-  }
-}
-
-
 /*
  * Lookup a user object using the email passed in
  * on the body of the reqest
@@ -111,44 +77,33 @@ async function fetchUser(email) {
 
   let user = null
 
-  const url = `https://httpbin.org/anything`  //TODO put a gql endpoint here
-  const query = `query {
-    users {
-      id
-      email
-      password
-    }
-  }`  //TODO put a GQL query here
+  // The following uses HTTPBin to mock a real networked call
+  // to get our mockup user for testing. This allows us to test
+  // with some meaningful network latency since the run time
+  // constraints in Workers is so tight.
+  const url = `https://httpbin.org/anything`
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      query: query,
-      variables: {
-        email: email
-      }
+      id: 1,
+      email: 'test@home.com',
+      password: '$2y$10$WUjDkHIXnIWgXbryTkXVk.C2d5kknKBzSsz4laty7t1.6Y.aioJMe',
+      //pass is qwerty123
+      name: 'Rob Newton',
+      nickname: "Rob",
+      picture: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?f=y",
+      roles: ['admin','user'],
+      role: 'admin'
     }),
   })
   
   const { headers } = response
   const contentType = headers.get('content-type') || ''
   if (contentType.includes('application/json')) {
-    user = JSON.stringify(await response.json())
-  }
-
-  //TODO replace this mock with a parsing of a real response
-  user = {
-    id: 1,
-    email: 'test@home.com',
-    password: '$2y$10$WUjDkHIXnIWgXbryTkXVk.C2d5kknKBzSsz4laty7t1.6Y.aioJMe',
-    //pass is qwerty123
-    name: 'Rob Newton',
-    nickname: "Rob",
-    picture: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?f=y",
-    roles: ['admin','user'],
-    role: 'admin'
+    user = (await response.json()).json
   }
 
   return user
