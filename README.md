@@ -15,6 +15,7 @@ UPDATE - Doesn't Work
 While technically this compiles and runs successfully, the password hashing proves too CPU intensive a task to perform in the allotted CPU time available (10ms free and 50ms bundled). As is usually the case when I have an idea if something will work it takes trying it and failing to find teh silver bullet online posting that could have told me the answer in the first place. In this case, that URL is below.
 
 - https://community.cloudflare.com/t/options-for-password-hashing/138077/11
+- https://community.cloudflare.com/t/long-running-webcrypto-api/90953/28
 
 
 Introduction
@@ -28,6 +29,11 @@ This is just an idea. I don't know if it will work but I want to take a few minu
 Apple recently changed their policy on third party cookies and it caused our implementation of Auth0 Lock in the React apps to stop working on Apple devices. After login they would never redirect back to the site with the JWT token.
 
 I searched a while and all of the solutions to get around these lack of support for 3rd party cookies didn't work. I've tried upgrading Lock, changing Auth0 settings, and nothing seemed to work. I know the underlying process is simple so I just got frustrated and wanted to get rid of all of the complexity and confusion that comes from misleading and outdated documentation and advice online around the Auth0 platform and just develop a simple authentication system myself.
+
+**Cheaper than alternatives?**
+Comparison to implementing as Lambda was discussed on HN:
+
+- https://news.ycombinator.com/item?id=17500391
 
 The Workers
 ---
